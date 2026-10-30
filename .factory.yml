@@ -1,0 +1,5 @@
+platform: ios
+asvs_level: null
+apple:
+  project_spec: project.yml
+  scheme: FactoryTestIOS
