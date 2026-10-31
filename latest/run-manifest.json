@@ -1,0 +1,97 @@
+{
+  "run_id": "41147346935-1",
+  "mode": "check",
+  "platform": "ios",
+  "iteration": 0,
+  "issue": null,
+  "repo": "AakashDadhich/factory-test-ios",
+  "commit_sha": "cc893152b9dfb92a760e761ab4a6d0474ab1cf55",
+  "factory_ref": "main",
+  "asvs_level": 2,
+  "stages": [
+    {
+      "name": "setup",
+      "status": "success"
+    },
+    {
+      "name": "plan",
+      "status": "pending"
+    },
+    {
+      "name": "threat-model",
+      "status": "pending"
+    },
+    {
+      "name": "codegen-ai",
+      "status": "pending"
+    },
+    {
+      "name": "codegen-commit",
+      "status": "pending"
+    },
+    {
+      "name": "review",
+      "status": "pending"
+    },
+    {
+      "name": "passthrough",
+      "status": "pending"
+    },
+    {
+      "name": "hello-ai",
+      "status": "pending"
+    },
+    {
+      "name": "secrets",
+      "status": "pending"
+    },
+    {
+      "name": "sast-semgrep",
+      "status": "pending"
+    },
+    {
+      "name": "sast-codeql",
+      "status": "pending"
+    },
+    {
+      "name": "sast-eslint",
+      "status": "pending"
+    },
+    {
+      "name": "sast-swiftlint",
+      "status": "pending"
+    },
+    {
+      "name": "sast-codeql-swift",
+      "status": "pending"
+    },
+    {
+      "name": "apple-build",
+      "status": "pending"
+    },
+    {
+      "name": "apple-checks",
+      "status": "pending"
+    },
+    {
+      "name": "mobsf",
+      "status": "pending"
+    },
+    {
+      "name": "deps-sbom",
+      "status": "pending"
+    },
+    {
+      "name": "dast-web",
+      "status": "pending"
+    },
+    {
+      "name": "gate",
+      "status": "pending"
+    }
+  ],
+  "tool_versions": {
+    "python": "3.12.15",
+    "security-factory": "0.1.0"
+  }
+}

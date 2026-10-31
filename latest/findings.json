@@ -1,0 +1,424 @@
+[
+  {
+    "id": "mobsf:0d47cc3906b055df3a8c1aad41bfd554834ddf531672a8006f0754a4bec2a4ec",
+    "stage": "mobsf",
+    "tool": "mobsf",
+    "source": "scanner",
+    "rule_id": "mobsf-binary-makes-use-of-insecure-api-s",
+    "title": "Binary makes use of insecure API(s)",
+    "severity": "medium",
+    "location": {
+      "path": "app.ipa",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The binary may contain the following insecure API(s) _fopen , _memcpy , _sscanf , _strlen (MobSF section: binary)",
+    "remediation": "Review the finding in the MobSF report and fix the cause, or suppress it with a reason and an expiry date.",
+    "fingerprint": "0d47cc3906b055df3a8c1aad41bfd554834ddf531672a8006f0754a4bec2a4ec",
+    "tools": [
+      "mobsf"
+    ],
+    "stages": [
+      "mobsf"
+    ],
+    "merged_fingerprints": [
+      "0d47cc3906b055df3a8c1aad41bfd554834ddf531672a8006f0754a4bec2a4ec"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "mobsf:a486899e9dfa39ecb46467062388e194169b8a9ac3923faf9b2ea607e6591425",
+    "stage": "mobsf",
+    "tool": "mobsf",
+    "source": "scanner",
+    "rule_id": "mobsf-binary-makes-use-of-malloc-function",
+    "title": "Binary makes use of malloc function",
+    "severity": "medium",
+    "location": {
+      "path": "app.ipa",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The binary may use _malloc function instead of calloc (MobSF section: binary)",
+    "remediation": "Review the finding in the MobSF report and fix the cause, or suppress it with a reason and an expiry date.",
+    "fingerprint": "a486899e9dfa39ecb46467062388e194169b8a9ac3923faf9b2ea607e6591425",
+    "tools": [
+      "mobsf"
+    ],
+    "stages": [
+      "mobsf"
+    ],
+    "merged_fingerprints": [
+      "a486899e9dfa39ecb46467062388e194169b8a9ac3923faf9b2ea607e6591425"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "mobsf:d040a2436228ad19265da98f42e1ee2d363d91a74f16aeb07127917dd1848edc",
+    "stage": "mobsf",
+    "tool": "mobsf",
+    "source": "scanner",
+    "rule_id": "mobsf-application-binary-has-rpath-set",
+    "title": "Application binary has rpath set",
+    "severity": "medium",
+    "location": {
+      "path": "app.ipa",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The binary has Runpath Search Path (@rpath) set. In certain cases an attacker can abuse this feature to run arbitrary executable for code execution and privilege escalation. Remove the compiler option -rpath to remove @rpath. (MobSF section: macho)",
+    "remediation": "Review the finding in the MobSF report and fix the cause, or suppress it with a reason and an expiry date.",
+    "fingerprint": "d040a2436228ad19265da98f42e1ee2d363d91a74f16aeb07127917dd1848edc",
+    "tools": [
+      "mobsf"
+    ],
+    "stages": [
+      "mobsf"
+    ],
+    "merged_fingerprints": [
+      "d040a2436228ad19265da98f42e1ee2d363d91a74f16aeb07127917dd1848edc"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "mobsf:f15bab1ebc4c5e2acabe95a71397e835b11e2c7434a96a550efbff8875f68b0a",
+    "stage": "mobsf",
+    "tool": "mobsf",
+    "source": "scanner",
+    "rule_id": "mobsf-application-binary-does-not-have-symbols-stripped",
+    "title": "Application binary does not have symbols stripped",
+    "severity": "medium",
+    "location": {
+      "path": "app.ipa",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "Debug Symbols are available. To strip debugging symbols, set Strip Debug Symbols During Copy to YES, Deployment Postprocessing to YES, and Strip Linked Product to YES in project's build settings. (MobSF section: macho)",
+    "remediation": "Review the finding in the MobSF report and fix the cause, or suppress it with a reason and an expiry date.",
+    "fingerprint": "f15bab1ebc4c5e2acabe95a71397e835b11e2c7434a96a550efbff8875f68b0a",
+    "tools": [
+      "mobsf"
+    ],
+    "stages": [
+      "mobsf"
+    ],
+    "merged_fingerprints": [
+      "f15bab1ebc4c5e2acabe95a71397e835b11e2c7434a96a550efbff8875f68b0a"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "review:875f7ef0719686461c7448049aa7fa00cf3ca2a61a6324f55429311826698a6e",
+    "stage": "review",
+    "tool": "claude-code",
+    "source": "ai-review",
+    "rule_id": "review-cwe-829",
+    "title": "Reusable workflow pinned to mutable branch while inheriting all secrets",
+    "severity": "low",
+    "location": {
+      "path": ".github/workflows/factory.yml",
+      "start_line": 24,
+      "end_line": 31
+    },
+    "cwe": [
+      "CWE-829"
+    ],
+    "description": "The workflow calls an external reusable workflow at `@main`, a mutable ref, and passes `secrets: inherit`. Anyone who can push to or compromise that repository's main branch can run arbitrary code with this repo's secrets and the `issues: write` and `security-events: write` permissions. The zizmor suppressions hide the warning rather than fix it.\n(confidence low)",
+    "remediation": "Pin the reusable workflow to a full commit SHA, or to a release tag once v1 exists. Pass only the specific secrets the workflow needs instead of `secrets: inherit`.",
+    "fingerprint": "875f7ef0719686461c7448049aa7fa00cf3ca2a61a6324f55429311826698a6e",
+    "tools": [
+      "claude-code"
+    ],
+    "stages": [
+      "review"
+    ],
+    "merged_fingerprints": [
+      "875f7ef0719686461c7448049aa7fa00cf3ca2a61a6324f55429311826698a6e"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "sast-swiftlint:78007591d81bede9e277ef6083a24c1447f60d7b616d1b516c58eaed49a835bd",
+    "stage": "sast-swiftlint",
+    "tool": "swiftlint",
+    "source": "scanner",
+    "rule_id": "trailing_comma",
+    "title": "Trailing Comma",
+    "severity": "low",
+    "location": {
+      "path": "Sources/KeychainStore.swift",
+      "start_line": 12,
+      "end_line": 12
+    },
+    "cwe": [],
+    "description": "Collection literals should not have trailing commas",
+    "remediation": "",
+    "fingerprint": "78007591d81bede9e277ef6083a24c1447f60d7b616d1b516c58eaed49a835bd",
+    "tools": [
+      "swiftlint"
+    ],
+    "stages": [
+      "sast-swiftlint"
+    ],
+    "merged_fingerprints": [
+      "78007591d81bede9e277ef6083a24c1447f60d7b616d1b516c58eaed49a835bd"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "sast-swiftlint:74ef652e18e5f00e948731eebca9b2d21e14801e94838b16cc3dfed9e407f2bf",
+    "stage": "sast-swiftlint",
+    "tool": "swiftlint",
+    "source": "scanner",
+    "rule_id": "trailing_comma",
+    "title": "Trailing Comma",
+    "severity": "low",
+    "location": {
+      "path": "Sources/KeychainStore.swift",
+      "start_line": 27,
+      "end_line": 27
+    },
+    "cwe": [],
+    "description": "Collection literals should not have trailing commas",
+    "remediation": "",
+    "fingerprint": "74ef652e18e5f00e948731eebca9b2d21e14801e94838b16cc3dfed9e407f2bf",
+    "tools": [
+      "swiftlint"
+    ],
+    "stages": [
+      "sast-swiftlint"
+    ],
+    "merged_fingerprints": [
+      "74ef652e18e5f00e948731eebca9b2d21e14801e94838b16cc3dfed9e407f2bf"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:0635809503d1541b2220be9f9d8351d396bf3191e32a337d772e9df3831ad618",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-005",
+    "title": "Spoofing: Loaded value accepted without verifying its origin",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "KeychainStore.load returns any string under the service and account and does not check its format. A foreign or tampered item that matches the service and account is shown as the last greeted name. A decode failure silently returns nil.\n\nFramework stride, element 'Load last name', likelihood low, impact low, rated low.",
+    "remediation": "- Scope Keychain queries with an explicit access group. Validate the loaded string's length and characters before use. (ASVS V2.2.1, V14.2.1)",
+    "fingerprint": "0635809503d1541b2220be9f9d8351d396bf3191e32a337d772e9df3831ad618",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "0635809503d1541b2220be9f9d8351d396bf3191e32a337d772e9df3831ad618"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:0d059a79ed186a8a446072313ca5993ee7f34d94a21b2e255bf53a021b4db272",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-002",
+    "title": "Denial of service: Keychain write on every keystroke with unbounded input size",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "onChange calls SecItemDelete and SecItemAdd on each keystroke, and the name length is not capped at the input. Very long pasted input causes repeated large Keychain writes. This can slow the UI or fail the write and leave the item deleted.\n\nFramework stride, element 'Save last name', likelihood low, impact low, rated low.",
+    "remediation": "- Cap the input length at the TextField. Save only valid values, and debounce saves or save on submit. Use SecItemUpdate or an atomic replace so a failed add does not lose the previous value. (ASVS V2.2.1, V15.2.2, V16.5.2)",
+    "fingerprint": "0d059a79ed186a8a446072313ca5993ee7f34d94a21b2e255bf53a021b4db272",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "0d059a79ed186a8a446072313ca5993ee7f34d94a21b2e255bf53a021b4db272"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:39c788d470903ebfd50f5e66d81fc3c780e0e99491d85ed5e45128fea989261f",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-008",
+    "title": "Information disclosure: Greeting and last name visible on screen",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The greeting and last greeted name are shown in the UI. They could be captured by screenshots, screen recording or the app-switcher snapshot. The data is low sensitivity.\n\nFramework stride, element 'Show greeting', likelihood low, impact low, rated low.",
+    "remediation": "- Obscure or hide the last-name label in the app-switcher snapshot when the app is backgrounded. (ASVS V14.3.1)",
+    "fingerprint": "39c788d470903ebfd50f5e66d81fc3c780e0e99491d85ed5e45128fea989261f",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "39c788d470903ebfd50f5e66d81fc3c780e0e99491d85ed5e45128fea989261f"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:75bc1a782044673117998ff1863ba59dc648e0a36fbe7515edcd1dd316353f27",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-007",
+    "title": "Elevation of privilege: Third-party dependency supply chain risk",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The app depends on apple/swift-log, fetched from GitHub. A compromised or substituted dependency would run with the app's privileges inside the sandbox. The version is pinned exactly in project.yml and Package.resolved, which reduces the risk.\n\nFramework stride, element 'Greeting app', likelihood low, impact medium, rated low.",
+    "remediation": "- Keep the exact version and revision pin in Package.resolved. Review dependency updates and scan them for known vulnerabilities in CI. (ASVS V15.1.1, V15.2.1, V13.4.1)",
+    "fingerprint": "75bc1a782044673117998ff1863ba59dc648e0a36fbe7515edcd1dd316353f27",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "75bc1a782044673117998ff1863ba59dc648e0a36fbe7515edcd1dd316353f27"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:76807e1721fdf6ad6a9e30f50ce077b5b21447e3fad6a6321b9fd83ae42d064d",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-006",
+    "title": "Repudiation: Keychain failures are not logged",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The result of KeychainStore.save is ignored apart from a UI check, and the OSStatus is never recorded. A failed save or load is silent, so the cause cannot be found.\n\nFramework stride, element 'Greeting app', likelihood low, impact low, rated low.",
+    "remediation": "- Log Keychain failure OSStatus codes at a suitable level without logging the stored value. (ASVS V16.3.4, V16.2.1)",
+    "fingerprint": "76807e1721fdf6ad6a9e30f50ce077b5b21447e3fad6a6321b9fd83ae42d064d",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "76807e1721fdf6ad6a9e30f50ce077b5b21447e3fad6a6321b9fd83ae42d064d"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:792812d79293d09aef7aa5c13118b3b330768ea45eca80bafd8130143c034b2e",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-004",
+    "title": "Tampering: Keychain item modified on a compromised or jailbroken device",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "On a jailbroken device an attacker with the same access group can change or replace the stored name. The app reads it back without an integrity check and displays it. Impact is limited to a misleading label.\n\nFramework stride, element 'Keychain', likelihood low, impact low, rated low.",
+    "remediation": "- Treat Keychain data as untrusted: validate it on load with the same rules as typed input. Optionally add jailbreak-aware risk handling. (ASVS V2.2.1, V14.3.3)",
+    "fingerprint": "792812d79293d09aef7aa5c13118b3b330768ea45eca80bafd8130143c034b2e",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "792812d79293d09aef7aa5c13118b3b330768ea45eca80bafd8130143c034b2e"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:c2e9633366a746b793bace4f786e2bdcd9e93fd8f295b803b988702b45f9581a",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-003",
+    "title": "Information disclosure: Personal name stored in Keychain and logged",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The last greeted name is personal data. It is stored with kSecAttrAccessibleWhenUnlockedThisDeviceOnly, which limits access to this device while unlocked and keeps the item out of backups. The logger currently writes only a fixed message, but a future change could log the name value, and logs can be read from a device.\n\nFramework stride, element 'Save last name', likelihood low, impact medium, rated low.",
+    "remediation": "- Keep the accessibility class kSecAttrAccessibleWhenUnlockedThisDeviceOnly. Never log name values, and keep the log level at info or above in release builds. (ASVS V14.2.4, V14.3.3, V16.2.5)",
+    "fingerprint": "c2e9633366a746b793bace4f786e2bdcd9e93fd8f295b803b988702b45f9581a",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "c2e9633366a746b793bace4f786e2bdcd9e93fd8f295b803b988702b45f9581a"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:da8b95c65f09cbbdca7f74b2c539811de35a45b92ec80cdb2fc5e525f8f16437",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-001",
+    "title": "Tampering: Untrusted name input stored and rendered without full validation",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The name typed in the TextField is saved to the Keychain on every change, even when Greeting.message rejects it. Oversized, control-character or non-letter input is persisted and later shown in the 'Last greeted' label. Validation only covers the greeting text, so stored and displayed data is not validated.\n\nFramework stride, element 'Enter name', likelihood medium, impact low, rated low.",
+    "remediation": "- Validate length and allowed characters once, before saving to the Keychain or displaying the value. Reject or truncate invalid input, and reuse the same check on load. (ASVS V2.2.1, V2.2.2, V1.3.1)",
+    "fingerprint": "da8b95c65f09cbbdca7f74b2c539811de35a45b92ec80cdb2fc5e525f8f16437",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "da8b95c65f09cbbdca7f74b2c539811de35a45b92ec80cdb2fc5e525f8f16437"
+    ],
+    "suppressed": false
+  }
+]
