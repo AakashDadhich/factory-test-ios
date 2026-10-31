@@ -1,12 +1,12 @@
 {
-  "run_id": "41147346935-1",
+  "run_id": "41189744963-1",
   "mode": "check",
   "platform": "ios",
   "iteration": 0,
   "issue": null,
   "repo": "AakashDadhich/factory-test-ios",
-  "commit_sha": "cc893152b9dfb92a760e761ab4a6d0474ab1cf55",
-  "factory_ref": "main",
+  "commit_sha": "222ac9bddef39b12c2399e7fbd795eb8a08ef82d",
+  "factory_ref": "v1",
   "asvs_level": 2,
   "stages": [
     {

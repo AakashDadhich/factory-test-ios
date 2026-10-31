@@ -1,26 +1,15 @@
 {
-  "added": [
-    {
-      "name": "/home/runner/work/factory-test-ios/factory-test-ios/.github/workflows/factory.yml",
-      "version": "",
-      "purl": ""
-    },
-    {
-      "name": "/home/runner/work/factory-test-ios/factory-test-ios/Package.resolved",
-      "version": "",
-      "purl": ""
-    },
+  "added": [],
+  "removed": [],
+  "changed": [
     {
       "name": "AakashDadhich/security-factory/.github/workflows/factory.yml",
-      "version": "main",
-      "purl": "pkg:github/AakashDadhich/security-factory@main#.github/workflows/factory.yml"
-    },
-    {
-      "name": "swift-log",
-      "version": "1.6.3",
-      "purl": "pkg:swift/github.com/apple/swift-log@1.6.3"
+      "old_versions": [
+        "main"
+      ],
+      "new_versions": [
+        "v1"
+      ]
     }
-  ],
-  "removed": [],
-  "changed": []
+  ]
 }

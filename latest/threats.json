@@ -1,24 +1,31 @@
 {
-  "model_version": "99479eb5d3ed7359f4bfabba0ce3556d0ed1c00c2bb4bd471b7ceec0eeb65f8d",
+  "model_version": "8dbc45370c977bd6e608f74c972a00ae18a530bdbac85ada3449843e3047fb43",
   "threats": [
     {
       "id": "TM-001",
       "framework": "stride",
-      "category": "tampering",
-      "element": "Enter name",
-      "title": "Untrusted name input stored and rendered without full validation",
-      "description": "The name typed in the TextField is saved to the Keychain on every change, even when Greeting.message rejects it. Oversized, control-character or non-letter input is persisted and later shown in the 'Last greeted' label. Validation only covers the greeting text, so stored and displayed data is not validated.",
-      "likelihood": "medium",
-      "impact": "low",
+      "category": "information-disclosure",
+      "element": "Keychain",
+      "title": "Stored name readable by other apps or from device backups",
+      "description": "The last entered name is a personal identifier kept in the Keychain. If the item is saved with a permissive accessibility class (such as kSecAttrAccessibleAlways) or with iCloud sync enabled, it can be read on a locked or compromised device, or from backups. A shared keychain access group could also expose it to other apps.",
+      "likelihood": "low",
+      "impact": "medium",
       "severity": "low",
       "mitigations": [
         {
           "id": "TM-001-M1",
-          "text": "Validate length and allowed characters once, before saving to the Keychain or displaying the value. Reject or truncate invalid input, and reuse the same check on load.",
+          "text": "Store the item with kSecAttrAccessibleWhenUnlockedThisDeviceOnly, no kSecAttrSynchronizable, and no shared access group.",
           "asvs_refs": [
-            "V2.2.1",
-            "V2.2.2",
-            "V1.3.1"
+            "V14.3.3",
+            "V11.3.1"
+          ]
+        },
+        {
+          "id": "TM-001-M2",
+          "text": "Use the Keychain for persistent storage only. Do not copy the name to UserDefaults, files or logs.",
+          "asvs_refs": [
+            "V14.2.4",
+            "V14.3.3"
           ]
         }
       ],
@@ -27,21 +34,20 @@
     {
       "id": "TM-002",
       "framework": "stride",
-      "category": "denial-of-service",
-      "element": "Save last name",
-      "title": "Keychain write on every keystroke with unbounded input size",
-      "description": "onChange calls SecItemDelete and SecItemAdd on each keystroke, and the name length is not capped at the input. Very long pasted input causes repeated large Keychain writes. This can slow the UI or fail the write and leave the item deleted.",
+      "category": "tampering",
+      "element": "Save last name request",
+      "title": "Unvalidated name written to the Keychain",
+      "description": "The entered name is stored without length or content limits. Oversized or malformed input could corrupt the stored item or fill the store. Saves are also not tied to a specific query, so a save could overwrite an unrelated item.",
       "likelihood": "low",
       "impact": "low",
       "severity": "low",
       "mitigations": [
         {
           "id": "TM-002-M1",
-          "text": "Cap the input length at the TextField. Save only valid values, and debounce saves or save on submit. Use SecItemUpdate or an atomic replace so a failed add does not lose the previous value.",
+          "text": "Validate and trim the name (maximum length, allowed characters) before saving. Use a fixed service and account key with SecItemUpdate or SecItemAdd, and check the returned OSStatus.",
           "asvs_refs": [
             "V2.2.1",
-            "V15.2.2",
-            "V16.5.2"
+            "V2.1.1"
           ]
         }
       ],
@@ -50,21 +56,20 @@
     {
       "id": "TM-003",
       "framework": "stride",
-      "category": "information-disclosure",
-      "element": "Save last name",
-      "title": "Personal name stored in Keychain and logged",
-      "description": "The last greeted name is personal data. It is stored with kSecAttrAccessibleWhenUnlockedThisDeviceOnly, which limits access to this device while unlocked and keeps the item out of backups. The logger currently writes only a fixed message, but a future change could log the name value, and logs can be read from a device.",
+      "category": "tampering",
+      "element": "Load last name response",
+      "title": "Loaded Keychain value trusted without validation",
+      "description": "A value read back from the Keychain could have been altered on a jailbroken device or by another process. If the app uses it without validation or decodes it unsafely, it could be displayed or processed in a harmful way.",
       "likelihood": "low",
-      "impact": "medium",
+      "impact": "low",
       "severity": "low",
       "mitigations": [
         {
           "id": "TM-003-M1",
-          "text": "Keep the accessibility class kSecAttrAccessibleWhenUnlockedThisDeviceOnly. Never log name values, and keep the log level at info or above in release builds.",
+          "text": "Treat the loaded value as untrusted. Decode it as UTF-8 with a length limit, fall back to an empty state on failure, and render it only as plain text.",
           "asvs_refs": [
-            "V14.2.4",
-            "V14.3.3",
-            "V16.2.5"
+            "V2.2.1",
+            "V1.2.1"
           ]
         }
       ],
@@ -73,19 +78,26 @@
     {
       "id": "TM-004",
       "framework": "stride",
-      "category": "tampering",
-      "element": "Keychain",
-      "title": "Keychain item modified on a compromised or jailbroken device",
-      "description": "On a jailbroken device an attacker with the same access group can change or replace the stored name. The app reads it back without an integrity check and displays it. Impact is limited to a misleading label.",
-      "likelihood": "low",
+      "category": "information-disclosure",
+      "element": "Show greeting and last name",
+      "title": "Name exposed through logs, screenshots or the app switcher",
+      "description": "The greeting and last name are shown on screen. They can be written to system logs, captured in app-switcher snapshots, or exposed to the pasteboard or keyboard cache. Other parties on the device could then read them.",
+      "likelihood": "medium",
       "impact": "low",
       "severity": "low",
       "mitigations": [
         {
           "id": "TM-004-M1",
-          "text": "Treat Keychain data as untrusted: validate it on load with the same rules as typed input. Optionally add jailbreak-aware risk handling.",
+          "text": "Do not log the name. Use os_log privacy markers (.private) if logging is needed.",
           "asvs_refs": [
-            "V2.2.1",
+            "V14.2.4",
+            "V16.2.5"
+          ]
+        },
+        {
+          "id": "TM-004-M2",
+          "text": "Mark the input field as non-autocorrecting and hide or blur the content when the app moves to the background.",
+          "asvs_refs": [
             "V14.3.3"
           ]
         }
@@ -95,20 +107,20 @@
     {
       "id": "TM-005",
       "framework": "stride",
-      "category": "spoofing",
-      "element": "Load last name",
-      "title": "Loaded value accepted without verifying its origin",
-      "description": "KeychainStore.load returns any string under the service and account and does not check its format. A foreign or tampered item that matches the service and account is shown as the last greeted name. A decode failure silently returns nil.",
-      "likelihood": "low",
+      "category": "tampering",
+      "element": "Enter name",
+      "title": "Malicious or oversized input from the user",
+      "description": "The user can enter very long strings, control characters or format-string-like text. This may cause UI hangs, a crash or an unexpected greeting when the name is interpolated.",
+      "likelihood": "medium",
       "impact": "low",
       "severity": "low",
       "mitigations": [
         {
           "id": "TM-005-M1",
-          "text": "Scope Keychain queries with an explicit access group. Validate the loaded string's length and characters before use.",
+          "text": "Limit input length and strip control characters. Build the greeting with safe string interpolation and never use it as a format string.",
           "asvs_refs": [
             "V2.2.1",
-            "V14.2.1"
+            "V1.2.1"
           ]
         }
       ],
@@ -117,20 +129,20 @@
     {
       "id": "TM-006",
       "framework": "stride",
-      "category": "repudiation",
-      "element": "Greeting app",
-      "title": "Keychain failures are not logged",
-      "description": "The result of KeychainStore.save is ignored apart from a UI check, and the OSStatus is never recorded. A failed save or load is silent, so the cause cannot be found.",
+      "category": "denial-of-service",
+      "element": "iOS app",
+      "title": "Crash or hang on Keychain failure or bad input",
+      "description": "The app may crash or block the main thread when a Keychain call fails (for example when the device is locked or an item is missing) or when it receives very large input. The user then cannot use the app.",
       "likelihood": "low",
       "impact": "low",
       "severity": "low",
       "mitigations": [
         {
           "id": "TM-006-M1",
-          "text": "Log Keychain failure OSStatus codes at a suitable level without logging the stored value.",
+          "text": "Handle every OSStatus error without force-unwrapping. Run Keychain calls off the main thread and show a safe default state on failure.",
           "asvs_refs": [
-            "V16.3.4",
-            "V16.2.1"
+            "V16.5.1",
+            "V16.5.2"
           ]
         }
       ],
@@ -139,21 +151,20 @@
     {
       "id": "TM-007",
       "framework": "stride",
-      "category": "elevation-of-privilege",
-      "element": "Greeting app",
-      "title": "Third-party dependency supply chain risk",
-      "description": "The app depends on apple/swift-log, fetched from GitHub. A compromised or substituted dependency would run with the app's privileges inside the sandbox. The version is pinned exactly in project.yml and Package.resolved, which reduces the risk.",
+      "category": "repudiation",
+      "element": "iOS app",
+      "title": "No record of stored-name changes or Keychain errors",
+      "description": "The app does not log when the stored name is saved or cleared, or when Keychain operations fail. Failed or unexpected writes cannot be investigated afterwards. This is low risk for a single-user local app.",
       "likelihood": "low",
-      "impact": "medium",
+      "impact": "low",
       "severity": "low",
       "mitigations": [
         {
           "id": "TM-007-M1",
-          "text": "Keep the exact version and revision pin in Package.resolved. Review dependency updates and scan them for known vulnerabilities in CI.",
+          "text": "Log Keychain operation outcomes (status codes only, with no name value) through the unified logging system.",
           "asvs_refs": [
-            "V15.1.1",
-            "V15.2.1",
-            "V13.4.1"
+            "V16.3.2",
+            "V16.2.1"
           ]
         }
       ],
@@ -162,19 +173,42 @@
     {
       "id": "TM-008",
       "framework": "stride",
-      "category": "information-disclosure",
-      "element": "Show greeting",
-      "title": "Greeting and last name visible on screen",
-      "description": "The greeting and last greeted name are shown in the UI. They could be captured by screenshots, screen recording or the app-switcher snapshot. The data is low sensitivity.",
+      "category": "elevation-of-privilege",
+      "element": "iOS app",
+      "title": "CI pipeline pinned to a mutable tag of the factory workflow",
+      "description": "The diff moves the reusable workflow reference and factory-ref from @main to @v1. A tag can be moved or retagged. Anyone who gains control of the upstream repository could run code in this repository's workflow, which has write permissions and `secrets: inherit`. That code could tamper with the app build or leak secrets.",
+      "likelihood": "low",
+      "impact": "high",
+      "severity": "medium",
+      "mitigations": [
+        {
+          "id": "TM-008-M1",
+          "text": "Pin the reusable workflow and factory-ref to a full commit SHA, and keep the workflow permissions minimal. Pass only the secrets the workflow needs instead of `secrets: inherit`.",
+          "asvs_refs": [
+            "V15.2.1",
+            "V13.4.1"
+          ]
+        }
+      ],
+      "status": "open"
+    },
+    {
+      "id": "TM-009",
+      "framework": "stride",
+      "category": "spoofing",
+      "element": "Keychain",
+      "title": "Substituted Keychain item on a compromised device",
+      "description": "On a jailbroken device an attacker could replace or pre-seed the Keychain item. The app would then show an attacker-chosen name as the last user. Without a Secure Enclave-backed access control the app cannot tell the value was not written by itself.",
       "likelihood": "low",
       "impact": "low",
       "severity": "low",
       "mitigations": [
         {
-          "id": "TM-008-M1",
-          "text": "Obscure or hide the last-name label in the app-switcher snapshot when the app is backgrounded.",
+          "id": "TM-009-M1",
+          "text": "Set an access control on the item and treat the stored value as non-authoritative display data. Optionally detect jailbreak and warn the user.",
           "asvs_refs": [
-            "V14.3.1"
+            "V14.3.3",
+            "V11.3.1"
           ]
         }
       ],

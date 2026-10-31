@@ -112,36 +112,6 @@
     "suppressed": false
   },
   {
-    "id": "review:875f7ef0719686461c7448049aa7fa00cf3ca2a61a6324f55429311826698a6e",
-    "stage": "review",
-    "tool": "claude-code",
-    "source": "ai-review",
-    "rule_id": "review-cwe-829",
-    "title": "Reusable workflow pinned to mutable branch while inheriting all secrets",
-    "severity": "low",
-    "location": {
-      "path": ".github/workflows/factory.yml",
-      "start_line": 24,
-      "end_line": 31
-    },
-    "cwe": [
-      "CWE-829"
-    ],
-    "description": "The workflow calls an external reusable workflow at `@main`, a mutable ref, and passes `secrets: inherit`. Anyone who can push to or compromise that repository's main branch can run arbitrary code with this repo's secrets and the `issues: write` and `security-events: write` permissions. The zizmor suppressions hide the warning rather than fix it.\n(confidence low)",
-    "remediation": "Pin the reusable workflow to a full commit SHA, or to a release tag once v1 exists. Pass only the specific secrets the workflow needs instead of `secrets: inherit`.",
-    "fingerprint": "875f7ef0719686461c7448049aa7fa00cf3ca2a61a6324f55429311826698a6e",
-    "tools": [
-      "claude-code"
-    ],
-    "stages": [
-      "review"
-    ],
-    "merged_fingerprints": [
-      "875f7ef0719686461c7448049aa7fa00cf3ca2a61a6324f55429311826698a6e"
-    ],
-    "suppressed": false
-  },
-  {
     "id": "sast-swiftlint:78007591d81bede9e277ef6083a24c1447f60d7b616d1b516c58eaed49a835bd",
     "stage": "sast-swiftlint",
     "tool": "swiftlint",
@@ -203,7 +173,7 @@
     "tool": "threat-model",
     "source": "ai-threat-model",
     "rule_id": "TM-005",
-    "title": "Spoofing: Loaded value accepted without verifying its origin",
+    "title": "Tampering: Malicious or oversized input from the user",
     "severity": "info",
     "location": {
       "path": "security/threats.json",
@@ -211,8 +181,8 @@
       "end_line": null
     },
     "cwe": [],
-    "description": "KeychainStore.load returns any string under the service and account and does not check its format. A foreign or tampered item that matches the service and account is shown as the last greeted name. A decode failure silently returns nil.\n\nFramework stride, element 'Load last name', likelihood low, impact low, rated low.",
-    "remediation": "- Scope Keychain queries with an explicit access group. Validate the loaded string's length and characters before use. (ASVS V2.2.1, V14.2.1)",
+    "description": "The user can enter very long strings, control characters or format-string-like text. This may cause UI hangs, a crash or an unexpected greeting when the name is interpolated.\n\nFramework stride, element 'Enter name', likelihood medium, impact low, rated low.",
+    "remediation": "- Limit input length and strip control characters. Build the greeting with safe string interpolation and never use it as a format string. (ASVS V2.2.1, V1.2.1)",
     "fingerprint": "0635809503d1541b2220be9f9d8351d396bf3191e32a337d772e9df3831ad618",
     "tools": [
       "threat-model"
@@ -231,7 +201,7 @@
     "tool": "threat-model",
     "source": "ai-threat-model",
     "rule_id": "TM-002",
-    "title": "Denial of service: Keychain write on every keystroke with unbounded input size",
+    "title": "Tampering: Unvalidated name written to the Keychain",
     "severity": "info",
     "location": {
       "path": "security/threats.json",
@@ -239,8 +209,8 @@
       "end_line": null
     },
     "cwe": [],
-    "description": "onChange calls SecItemDelete and SecItemAdd on each keystroke, and the name length is not capped at the input. Very long pasted input causes repeated large Keychain writes. This can slow the UI or fail the write and leave the item deleted.\n\nFramework stride, element 'Save last name', likelihood low, impact low, rated low.",
-    "remediation": "- Cap the input length at the TextField. Save only valid values, and debounce saves or save on submit. Use SecItemUpdate or an atomic replace so a failed add does not lose the previous value. (ASVS V2.2.1, V15.2.2, V16.5.2)",
+    "description": "The entered name is stored without length or content limits. Oversized or malformed input could corrupt the stored item or fill the store. Saves are also not tied to a specific query, so a save could overwrite an unrelated item.\n\nFramework stride, element 'Save last name request', likelihood low, impact low, rated low.",
+    "remediation": "- Validate and trim the name (maximum length, allowed characters) before saving. Use a fixed service and account key with SecItemUpdate or SecItemAdd, and check the returned OSStatus. (ASVS V2.2.1, V2.1.1)",
     "fingerprint": "0d059a79ed186a8a446072313ca5993ee7f34d94a21b2e255bf53a021b4db272",
     "tools": [
       "threat-model"
@@ -259,7 +229,7 @@
     "tool": "threat-model",
     "source": "ai-threat-model",
     "rule_id": "TM-008",
-    "title": "Information disclosure: Greeting and last name visible on screen",
+    "title": "Elevation of privilege: CI pipeline pinned to a mutable tag of the factory workflow",
     "severity": "info",
     "location": {
       "path": "security/threats.json",
@@ -267,8 +237,8 @@
       "end_line": null
     },
     "cwe": [],
-    "description": "The greeting and last greeted name are shown in the UI. They could be captured by screenshots, screen recording or the app-switcher snapshot. The data is low sensitivity.\n\nFramework stride, element 'Show greeting', likelihood low, impact low, rated low.",
-    "remediation": "- Obscure or hide the last-name label in the app-switcher snapshot when the app is backgrounded. (ASVS V14.3.1)",
+    "description": "The diff moves the reusable workflow reference and factory-ref from @main to @v1. A tag can be moved or retagged. Anyone who gains control of the upstream repository could run code in this repository's workflow, which has write permissions and `secrets: inherit`. That code could tamper with the app build or leak secrets.\n\nFramework stride, element 'iOS app', likelihood low, impact high, rated medium.",
+    "remediation": "- Pin the reusable workflow and factory-ref to a full commit SHA, and keep the workflow permissions minimal. Pass only the secrets the workflow needs instead of `secrets: inherit`. (ASVS V15.2.1, V13.4.1)",
     "fingerprint": "39c788d470903ebfd50f5e66d81fc3c780e0e99491d85ed5e45128fea989261f",
     "tools": [
       "threat-model"
@@ -282,12 +252,12 @@
     "suppressed": false
   },
   {
-    "id": "threat-model:75bc1a782044673117998ff1863ba59dc648e0a36fbe7515edcd1dd316353f27",
+    "id": "threat-model:43036f2e2e7fd9e5630c178d331e97a241b0a93fe1494ab5e1af51811721c1cb",
     "stage": "threat-model",
     "tool": "threat-model",
     "source": "ai-threat-model",
-    "rule_id": "TM-007",
-    "title": "Elevation of privilege: Third-party dependency supply chain risk",
+    "rule_id": "TM-009",
+    "title": "Spoofing: Substituted Keychain item on a compromised device",
     "severity": "info",
     "location": {
       "path": "security/threats.json",
@@ -295,8 +265,36 @@
       "end_line": null
     },
     "cwe": [],
-    "description": "The app depends on apple/swift-log, fetched from GitHub. A compromised or substituted dependency would run with the app's privileges inside the sandbox. The version is pinned exactly in project.yml and Package.resolved, which reduces the risk.\n\nFramework stride, element 'Greeting app', likelihood low, impact medium, rated low.",
-    "remediation": "- Keep the exact version and revision pin in Package.resolved. Review dependency updates and scan them for known vulnerabilities in CI. (ASVS V15.1.1, V15.2.1, V13.4.1)",
+    "description": "On a jailbroken device an attacker could replace or pre-seed the Keychain item. The app would then show an attacker-chosen name as the last user. Without a Secure Enclave-backed access control the app cannot tell the value was not written by itself.\n\nFramework stride, element 'Keychain', likelihood low, impact low, rated low.",
+    "remediation": "- Set an access control on the item and treat the stored value as non-authoritative display data. Optionally detect jailbreak and warn the user. (ASVS V14.3.3, V11.3.1)",
+    "fingerprint": "43036f2e2e7fd9e5630c178d331e97a241b0a93fe1494ab5e1af51811721c1cb",
+    "tools": [
+      "threat-model"
+    ],
+    "stages": [
+      "threat-model"
+    ],
+    "merged_fingerprints": [
+      "43036f2e2e7fd9e5630c178d331e97a241b0a93fe1494ab5e1af51811721c1cb"
+    ],
+    "suppressed": false
+  },
+  {
+    "id": "threat-model:75bc1a782044673117998ff1863ba59dc648e0a36fbe7515edcd1dd316353f27",
+    "stage": "threat-model",
+    "tool": "threat-model",
+    "source": "ai-threat-model",
+    "rule_id": "TM-007",
+    "title": "Repudiation: No record of stored-name changes or Keychain errors",
+    "severity": "info",
+    "location": {
+      "path": "security/threats.json",
+      "start_line": null,
+      "end_line": null
+    },
+    "cwe": [],
+    "description": "The app does not log when the stored name is saved or cleared, or when Keychain operations fail. Failed or unexpected writes cannot be investigated afterwards. This is low risk for a single-user local app.\n\nFramework stride, element 'iOS app', likelihood low, impact low, rated low.",
+    "remediation": "- Log Keychain operation outcomes (status codes only, with no name value) through the unified logging system. (ASVS V16.3.2, V16.2.1)",
     "fingerprint": "75bc1a782044673117998ff1863ba59dc648e0a36fbe7515edcd1dd316353f27",
     "tools": [
       "threat-model"
@@ -315,7 +313,7 @@
     "tool": "threat-model",
     "source": "ai-threat-model",
     "rule_id": "TM-006",
-    "title": "Repudiation: Keychain failures are not logged",
+    "title": "Denial of service: Crash or hang on Keychain failure or bad input",
     "severity": "info",
     "location": {
       "path": "security/threats.json",
@@ -323,8 +321,8 @@
       "end_line": null
     },
     "cwe": [],
-    "description": "The result of KeychainStore.save is ignored apart from a UI check, and the OSStatus is never recorded. A failed save or load is silent, so the cause cannot be found.\n\nFramework stride, element 'Greeting app', likelihood low, impact low, rated low.",
-    "remediation": "- Log Keychain failure OSStatus codes at a suitable level without logging the stored value. (ASVS V16.3.4, V16.2.1)",
+    "description": "The app may crash or block the main thread when a Keychain call fails (for example when the device is locked or an item is missing) or when it receives very large input. The user then cannot use the app.\n\nFramework stride, element 'iOS app', likelihood low, impact low, rated low.",
+    "remediation": "- Handle every OSStatus error without force-unwrapping. Run Keychain calls off the main thread and show a safe default state on failure. (ASVS V16.5.1, V16.5.2)",
     "fingerprint": "76807e1721fdf6ad6a9e30f50ce077b5b21447e3fad6a6321b9fd83ae42d064d",
     "tools": [
       "threat-model"
@@ -343,7 +341,7 @@
     "tool": "threat-model",
     "source": "ai-threat-model",
     "rule_id": "TM-004",
-    "title": "Tampering: Keychain item modified on a compromised or jailbroken device",
+    "title": "Information disclosure: Name exposed through logs, screenshots or the app switcher",
     "severity": "info",
     "location": {
       "path": "security/threats.json",
@@ -351,8 +349,8 @@
       "end_line": null
     },
     "cwe": [],
-    "description": "On a jailbroken device an attacker with the same access group can change or replace the stored name. The app reads it back without an integrity check and displays it. Impact is limited to a misleading label.\n\nFramework stride, element 'Keychain', likelihood low, impact low, rated low.",
-    "remediation": "- Treat Keychain data as untrusted: validate it on load with the same rules as typed input. Optionally add jailbreak-aware risk handling. (ASVS V2.2.1, V14.3.3)",
+    "description": "The greeting and last name are shown on screen. They can be written to system logs, captured in app-switcher snapshots, or exposed to the pasteboard or keyboard cache. Other parties on the device could then read them.\n\nFramework stride, element 'Show greeting and last name', likelihood medium, impact low, rated low.",
+    "remediation": "- Do not log the name. Use os_log privacy markers (.private) if logging is needed. (ASVS V14.2.4, V16.2.5)\n- Mark the input field as non-autocorrecting and hide or blur the content when the app moves to the background. (ASVS V14.3.3)",
     "fingerprint": "792812d79293d09aef7aa5c13118b3b330768ea45eca80bafd8130143c034b2e",
     "tools": [
       "threat-model"
@@ -371,7 +369,7 @@
     "tool": "threat-model",
     "source": "ai-threat-model",
     "rule_id": "TM-003",
-    "title": "Information disclosure: Personal name stored in Keychain and logged",
+    "title": "Tampering: Loaded Keychain value trusted without validation",
     "severity": "info",
     "location": {
       "path": "security/threats.json",
@@ -379,8 +377,8 @@
       "end_line": null
     },
     "cwe": [],
-    "description": "The last greeted name is personal data. It is stored with kSecAttrAccessibleWhenUnlockedThisDeviceOnly, which limits access to this device while unlocked and keeps the item out of backups. The logger currently writes only a fixed message, but a future change could log the name value, and logs can be read from a device.\n\nFramework stride, element 'Save last name', likelihood low, impact medium, rated low.",
-    "remediation": "- Keep the accessibility class kSecAttrAccessibleWhenUnlockedThisDeviceOnly. Never log name values, and keep the log level at info or above in release builds. (ASVS V14.2.4, V14.3.3, V16.2.5)",
+    "description": "A value read back from the Keychain could have been altered on a jailbroken device or by another process. If the app uses it without validation or decodes it unsafely, it could be displayed or processed in a harmful way.\n\nFramework stride, element 'Load last name response', likelihood low, impact low, rated low.",
+    "remediation": "- Treat the loaded value as untrusted. Decode it as UTF-8 with a length limit, fall back to an empty state on failure, and render it only as plain text. (ASVS V2.2.1, V1.2.1)",
     "fingerprint": "c2e9633366a746b793bace4f786e2bdcd9e93fd8f295b803b988702b45f9581a",
     "tools": [
       "threat-model"
@@ -399,7 +397,7 @@
     "tool": "threat-model",
     "source": "ai-threat-model",
     "rule_id": "TM-001",
-    "title": "Tampering: Untrusted name input stored and rendered without full validation",
+    "title": "Information disclosure: Stored name readable by other apps or from device backups",
     "severity": "info",
     "location": {
       "path": "security/threats.json",
@@ -407,8 +405,8 @@
       "end_line": null
     },
     "cwe": [],
-    "description": "The name typed in the TextField is saved to the Keychain on every change, even when Greeting.message rejects it. Oversized, control-character or non-letter input is persisted and later shown in the 'Last greeted' label. Validation only covers the greeting text, so stored and displayed data is not validated.\n\nFramework stride, element 'Enter name', likelihood medium, impact low, rated low.",
-    "remediation": "- Validate length and allowed characters once, before saving to the Keychain or displaying the value. Reject or truncate invalid input, and reuse the same check on load. (ASVS V2.2.1, V2.2.2, V1.3.1)",
+    "description": "The last entered name is a personal identifier kept in the Keychain. If the item is saved with a permissive accessibility class (such as kSecAttrAccessibleAlways) or with iCloud sync enabled, it can be read on a locked or compromised device, or from backups. A shared keychain access group could also expose it to other apps.\n\nFramework stride, element 'Keychain', likelihood low, impact medium, rated low.",
+    "remediation": "- Store the item with kSecAttrAccessibleWhenUnlockedThisDeviceOnly, no kSecAttrSynchronizable, and no shared access group. (ASVS V14.3.3, V11.3.1)\n- Use the Keychain for persistent storage only. Do not copy the name to UserDefaults, files or logs. (ASVS V14.2.4, V14.3.3)",
     "fingerprint": "da8b95c65f09cbbdca7f74b2c539811de35a45b92ec80cdb2fc5e525f8f16437",
     "tools": [
       "threat-model"
